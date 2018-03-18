@@ -96,6 +96,7 @@ The following Curl example shows the typical body content to be sent in a Post a
 			}
 		}
 }```
+
 `-H "Content-Type: application/json" -X POST https://demo.demo/api/`
 
 **Create Response**
@@ -185,6 +186,7 @@ The request below is for cuisine(s) which allow you to mutli-select cuisines and
 **Read Response Cuisine**
 
 The Response should have pagination links, any links that cannot be generated will return null. To paginate you can use the links provided or by changing the curl request with a different number at the end. A 404 Not Found will return if a page is not available.
+
 ```json{
 	"response": 200,
 	"page":1,
