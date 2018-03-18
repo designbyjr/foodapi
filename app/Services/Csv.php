@@ -5,6 +5,7 @@ namespace App\Services;
 use League\Csv;
 use League\Csv\Reader;
 use Illuminate\Support\Collection;
+use League\Csv\Writer;
 
 class MyCsv {
 
@@ -13,25 +14,6 @@ class MyCsv {
 	public function __construct()
 	{
 		$this->reader = Reader::createFromPath('../recipe-data.csv', 'r+');
-	}
-
-	
-	/*
-	** This reads one result by ID and returns it, if null it will return all.
-	*/
-	public function readOne( int $id = null )
-	{
-		return !isset($id) ? $this->getAllResults() : $this->fixCols( collect( $this->reader->fetchOne($id) ) );	
-	}
-
-	/*
-	** This reads more than one result by id and returns it.
-	*/
-	public function readMany(array $ids)
-	{
-		$collection = $this->getAllResults();
-		$collection = $collection->whereIn('id',$ids);
-		return $collection;
 	}
 
 
@@ -46,24 +28,21 @@ class MyCsv {
 	}
 
 	/*
-	** This gets the keys from the first row, allowing order to be interchangeable.
-	** Thereby futureproofing the order in which coloums are displayed.
+	** This reads more than one result by id and returns it.
 	*/
-	private function getKeys()
-	{	
-		$data = $this->reader->fetchAll();
-		return array_shift($data);
+	public function readMany(array $ids)
+	{
+		$collection = $this->getAllResults();
+		$collection = $collection->whereIn('id',$ids);
+		return $collection;
 	}
 
 	/*
-	** This gets all the results, and shifts the first row.
+	** This reads one result by ID and returns it, if null it will return all.
 	*/
-	private function getAllResults()
-	{	
-		$data = $this->reader->fetchAll();
-		array_shift($data);
-		$collection = collect($data);
-		return $this->fixCols($collection);
+	public function readOne( int $id = null )
+	{
+		return !isset($id) ? $this->getAllResults() : $this->fixCols( collect( $this->reader->fetchOne($id) ) );	
 	}
 
 	/*
@@ -96,5 +75,27 @@ class MyCsv {
 
 
 	}
+
+	/*
+	** This gets the keys from the first row, allowing order to be interchangeable.
+	** Thereby futureproofing the order in which coloums are displayed.
+	*/
+	private function getKeys()
+	{	
+		$data = $this->reader->fetchAll();
+		return array_shift($data);
+	}
+
+	/*
+	** This gets all the results, and shifts the first row.
+	*/
+	private function getAllResults()
+	{	
+		$data = $this->reader->fetchAll();
+		array_shift($data);
+		$collection = collect($data);
+		return $this->fixCols($collection);
+	}
+
 
 }
