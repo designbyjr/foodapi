@@ -14,6 +14,6 @@ use App\Services\MyCsv;
 */
 
 Route::get('/', function (MyCsv $CSVService) {
-	dd($CSVService->readOne());
+	dd($CSVService->readOne(1));
 	
 });

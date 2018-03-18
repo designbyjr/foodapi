@@ -72,10 +72,12 @@ class MyCsv {
 	private function fixCols($collection)
 	{	
 		$keys = $this->getKeys();
+		$singleCount = count($keys) - 1;
 
-		// For mutlidimensional arrays
+		// For mutlidimensional arrays, single count checks if count matches number of items
+		// in single array vs mutlidimensional arrays.
 
-		if(count($collection) !== count($keys)) {
+		if(!array_key_exists($singleCount, $collection->all())) {
 			return $collection->transform(function($item,$key) use ($keys){
 				$array = array_combine($keys,$item);
 				$array["created_at"] = strtotime(str_replace("/", "-",$array["created_at"]));
