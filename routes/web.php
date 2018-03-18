@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\MyCsv;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +13,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function (MyCsv $CSVService) {
+	
+	return $CSVService->read();
+  	
 });

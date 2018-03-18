@@ -275,10 +275,12 @@ This will update request **does not allow a mutli-select option with an array**,
 
 `curl -d
 {
-    "id":2,
-    modify:{
-    	"rating": 5
-    }
+   "0":{
+		"id":2,
+		modify:{
+		    	"rating": 5
+		    	}
+		}
 }
 -H "Content-Type: application/json" -X **PUT** https://demo.demo/api`
 
@@ -286,4 +288,7 @@ This will return the modified version of the recipe that was to be updated.
 
 
 ## Testing
+
+## Future Changes
+
 
