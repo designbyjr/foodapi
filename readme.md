@@ -59,8 +59,8 @@ in_your_box
 The following Curl example shows the typical body content to be sent in a Post action.
 
 
-`curl -d
-{
+`curl -d`
+```json{
     "0": {
 			"id":1,
 			"created_at": 1435683480000,
@@ -95,8 +95,8 @@ The following Curl example shows the typical body content to be sent in a Post a
 				"protein_source": "beef"
 			}
 		}
-    -H "Content-Type: application/json" -X POST https://demo.demo/api/
-}`
+}```
+`-H "Content-Type: application/json" -X POST https://demo.demo/api/`
 
 **Create Response**
 
@@ -125,7 +125,7 @@ The Curl below is requesting more than one object.
 
 The Response should be like this with a 200 response. The time has been converted to milliseconds so that mobile and web devices can handle date time. This currently shows one recipe as an example.
 
-`{
+```json{
 	"response": 200,
 	"links":{
 		"self": "https://demo.demo/api/"
@@ -166,7 +166,7 @@ The Response should be like this with a 200 response. The time has been converte
 			}
 		}
 	}]
-}`
+}```
 
 The request below requests all recepies.
 
@@ -185,8 +185,7 @@ The request below is for cuisine(s) which allow you to mutli-select cuisines and
 **Read Response Cuisine**
 
 The Response should have pagination links, any links that cannot be generated will return null. To paginate you can use the links provided or by changing the curl request with a different number at the end. A 404 Not Found will return if a page is not available.
-
-`{
+```json{
 	"response": 200,
 	"page":1,
 	"links": {
@@ -232,7 +231,7 @@ The Response should have pagination links, any links that cannot be generated wi
 			}
 		}
 	}]
-}`
+}```
 
 
 **Delete**
