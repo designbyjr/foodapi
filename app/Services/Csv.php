@@ -10,45 +10,29 @@ use League\Csv\Writer;
 class MyCsv {
 
 	private $reader;
+	private $csvWriter;
 
 	public function __construct()
 	{
 		$this->reader = Reader::createFromPath('../recipe-data.csv', 'r+');
+		$this->csvWriter = Writer::createFromPath('../data.csv','w+');
 	}
 
 
 	/*
-	** This reads one or more results by cuisine name and returns it.
-	*/
-	public function readCuisine(array $cuisine)
-	{
-		$collection = $this->getAllResults();
-		$collection = $collection->whereIn('recipe_cuisine',$cuisine);
-		return $collection;
-	}
+	** Test this update function
+	*/	
+	public function CreateRows(collection $collection, array $rows)
+	{	
+		$body = $collection->push($rows);
 
-	/*
-	** This reads more than one result by id and returns it.
-	*/
-	public function readMany(array $ids)
-	{
-		$collection = $this->getAllResults();
-		$collection = $collection->whereIn('id',$ids);
-		return $collection;
-	}
-
-	/*
-	** This reads one result by ID and returns it, if null it will return all.
-	*/
-	public function readOne( int $id = null )
-	{
-		return !isset($id) ? $this->getAllResults() : $this->fixCols( collect( $this->reader->fetchOne($id) ) );	
+		return $this->writeToCsv($body);
 	}
 
 	/*
 	** This gets fixes the results to have millsecond time and fixes array keys with coloumns.
 	*/
-	private function fixCols($collection)
+	private function fixColsToMlTime(collection $collection)
 	{	
 		$keys = $this->getKeys();
 		$singleCount = count($keys) - 1;
@@ -76,6 +60,26 @@ class MyCsv {
 
 	}
 
+	public function test()
+	{	$test = collect($this->fixColsToMlTime(collect($this->reader->fetchOne(3))));
+		return $this->CreateRows($this->getAllResults(),$test->all());
+	}
+
+	//fix this
+	private function fixColsToDateTime(collection $collection)
+	{	
+		$keys = $this->getKeys();
+
+		return $collection->transform(function($item,$key) use ($keys){
+				$array = array_combine($keys,$item);
+				$array["created_at"] = Date('d/m/Y H:i:s',substr($array["created_at"],0,10));
+				$array["updated_at"] = Date('d/m/Y H:i:s',substr($array["updated_at"],0,10));
+				return $array;
+			});
+
+
+	}
+
 	/*
 	** This gets the keys from the first row, allowing order to be interchangeable.
 	** Thereby futureproofing the order in which coloums are displayed.
@@ -94,8 +98,64 @@ class MyCsv {
 		$data = $this->reader->fetchAll();
 		array_shift($data);
 		$collection = collect($data);
-		return $this->fixCols($collection);
+		return $this->fixColsToMlTime($collection);
 	}
 
+	/*
+	** This reads one or more results by cuisine name and returns it.
+	*/
+	public function readCuisine(array $cuisine)
+	{
+		$collection = $this->getAllResults();
+		$collection = $collection->whereIn('recipe_cuisine',$cuisine);
+		return $collection;
+	}
+
+	/*
+	** This reads more than one result by id and returns it.
+	*/
+	public function readMany(array $ids)
+	{
+		$collection = $this->getAllResults();
+		$collection = $collection->whereIn('id',$ids);
+		return $collection;
+	}
+
+	/*
+	** This reads one result by ID and returns it, if null it will return all.
+	*/
+	public function readOne( int $id = null )
+	{
+		return !isset($id) ? $this->getAllResults() : $this->fixColsToMlTime( collect( $this->reader->fetchOne($id) ) );	
+	}
+
+	/*
+	** Test this update function
+	*/	
+	public function UpdateRows(collection $collection, array $rows)
+	{
+		$body = $collection->transform(function($item,$key) use ($rows){
+				if( array_key_exists( $key, array_keys($rows) ) )
+				{
+					return $rows[$key];
+				}
+				return $item;
+			});
+
+		return $this->writeToCsv($body);
+	}
+
+	/*
+	** This writes the csv file with headers and body.
+	*/
+	private function writeToCsv(collection $body)
+	{
+		$header = $this->getKeys();
+		$body = $this->fixColsToDateTime($body);
+		$body->prepend($header);
+
+		//we insert the CSV header
+		$this->csvWriter->insertAll($body->all());
+	}
 
 }
