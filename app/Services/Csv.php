@@ -22,11 +22,35 @@ class MyCsv {
 	/*
 	** Test this update function
 	*/	
-	public function CreateRows(collection $collection, array $rows)
-	{	
+	public function CreateRows(array $rows)
+	{	$collection = $this->getAllResults();
 		$body = $collection->push($rows);
 
 		return $this->writeToCsv($body);
+	}
+
+	/*
+	** Test this update function
+	*/	
+	public function CreateColumn(string $column)
+	{	
+		$collection = $this->getAllResults();
+		//get current columns as keys
+		$keys = collect($this->getKeys());
+		$header = $keys->push($column)->all();
+
+		//transform collection to have extra coloumn on each row
+		$body = $collection->transform(function($item,$key) use ($column){
+			$item[$column] = null;
+			return $item;
+		});
+		// //add new columns
+		$body->prepend($header);
+
+		// //we insert the CSV header
+		$this->csvWriter->insertAll($body->all());
+
+		return $body;
 	}
 
 	/*
@@ -61,8 +85,8 @@ class MyCsv {
 	}
 
 	public function test()
-	{	$test = collect($this->fixColsToMlTime(collect($this->reader->fetchOne(3))));
-		return $this->CreateRows($this->getAllResults(),$test->all());
+	{	
+		return $this->CreateColumn('rating');
 	}
 
 	//fix this
@@ -104,11 +128,11 @@ class MyCsv {
 	/*
 	** This reads one or more results by cuisine name and returns it.
 	*/
-	public function readCuisine(array $cuisine)
+	public function readCuisine($cuisine)
 	{
 		$collection = $this->getAllResults();
-		$collection = $collection->whereIn('recipe_cuisine',$cuisine);
-		return $collection;
+		$result = $collection->whereIn('recipe_cuisine',$cuisine);
+		return $result;
 	}
 
 	/*
@@ -126,7 +150,7 @@ class MyCsv {
 	*/
 	public function readOne( int $id = null )
 	{
-		return !isset($id) ? $this->getAllResults() : $this->fixColsToMlTime( collect( $this->reader->fetchOne($id) ) );	
+		return !isset($id) ? $this->getAllResults() : collect($this->fixColsToMlTime( collect( $this->reader->fetchOne($id) ) ) );	
 	}
 
 	/*
