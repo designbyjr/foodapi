@@ -244,7 +244,7 @@ This will update request **does not allow a mutli-select option with an array**,
 ```json
 {
     "id":2,
-    modify:{
+    "modify":{
     	"protein_source": "beef"
     }
 }
