@@ -32,7 +32,7 @@ PHP can be tested by running "php -i"; Menus should appear for both php and comp
 Once PHP and Composer are installed run the command below in the directory you want to run the code in:
 
 ```
-	Composer require designbyjr/apichallenge
+Composer require designbyjr/foodapi
 ```
 
 Now change the directory your in to apichallenge and find the changeme.env file and rename it to .env
@@ -40,7 +40,7 @@ Now change the directory your in to apichallenge and find the changeme.env file 
 Then run the following code:
 
 ```
-	Composer install
+Composer install
 ```
 
 ## How It Works
