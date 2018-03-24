@@ -31,11 +31,9 @@ PHP can be tested by running "php -i"; Menus should appear for both php and comp
 
 Once PHP and Composer are installed run the command below in the directory you want to run the code in:
 
-```
-Composer require designbyjr/foodapi
-```
+Download the repository from `https://github.com/designbyjr/foodapi`
 
-Now change the directory your in to apichallenge and find the changeme.env file and rename it to .env
+Now change the directory your in to foodapi and find the .env file, make sure settings are correct.
 
 Then run the following code:
 
@@ -46,6 +44,8 @@ Composer install
 ## How It Works
 
 The following are crud methods which have been tested in <a href="https://www.getpostman.com/apps">Postman</a> with a JSON body payload, the routes can be also tested with CURL and PHP Unit.
+
+demo.demo is an alias for your specified name that you wish to use the application, normally it will be localhost:8000.
 
 **Create**
 
