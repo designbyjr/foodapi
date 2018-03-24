@@ -33,7 +33,7 @@ Once PHP and Composer are installed run the command below in the directory you w
 
 Download the repository from `https://github.com/designbyjr/foodapi`
 
-Now change the directory your in to foodapi and find the .env file, make sure settings are correct.
+Now change the directory your are in to foodapi and find the .env file, make sure settings are correct.
 
 Then run the following code:
 
@@ -73,7 +73,7 @@ The following Curl example shows the typical body content to be sent in a Post a
 			"season": "all",
 				"in_your_box": null,
 				"recipe_diet_type_id": "meat",
-				"base": "noodles"
+				"base": "noodles",
 				"title": "Sweet Chilli and Lime Beef on a Crunchy Fresh Noodle Salad",
 				"slug": "sweet-chilli-and-lime-beef-on-a-crunchy-fresh-noodle-salad",
 				"short_title": null,
