@@ -1,7 +1,5 @@
 <?php
 
-use App\Services\MyCsv;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +11,3 @@ use App\Services\MyCsv;
 |
 */
 
-Route::get('/', function (MyCsv $CSVService) {
-	dd($CSVService->test());
-	
-});

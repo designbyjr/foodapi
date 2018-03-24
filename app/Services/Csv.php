@@ -15,7 +15,7 @@ class MyCsv {
 	public function __construct()
 	{
 		$this->reader = Reader::createFromPath('../recipe-data.csv', 'r+');
-		$this->csvWriter = Writer::createFromPath('../ecipe-data.csv','w+');
+		$this->csvWriter = Writer::createFromPath('../recipe-data.csv','w+');
 	}
 
 
@@ -93,11 +93,6 @@ class MyCsv {
 			return $array;
 
 
-	}
-
-	public function test($json)
-	{	
-		return $this->fixColsToDateTime( collect(json_decode($json)));
 	}
 
 	//fix this

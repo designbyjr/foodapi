@@ -112,18 +112,12 @@ The response from create should be a 200 and the following json response.
 The Curl below is requesting one object.
 
 `curl -d
-{
-    "id": [1]
-}
--H "Content-Type: application/json" -X **GET**  https://demo.demo/api/`
+-H "Content-Type: application/json" -X **GET**  https://demo.demo/api/?id[]=1`
 
 The Curl below is requesting more than one object.
 
 `curl -d
-{
-    "id": [1,2,5]
-}
--H "Content-Type: application/json" -X **GET**  https://demo.demo/api/`
+-H "Content-Type: application/json" -X **GET**  https://demo.demo/api/?id[]=1,2`
 
 **Read Response**
 
