@@ -15,7 +15,7 @@ class MyCsv {
 	public function __construct()
 	{
 		$this->reader = Reader::createFromPath('../recipe-data.csv', 'r+');
-		$this->csvWriter = Writer::createFromPath('../data.csv','w+');
+		$this->csvWriter = Writer::createFromPath('../ecipe-data.csv','w+');
 	}
 
 
