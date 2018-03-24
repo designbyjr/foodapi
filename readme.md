@@ -14,7 +14,7 @@ i have opted to use collections. This will ensure i can retrive from a collectio
 Collections also have the advantage to be modified but also easily accessable ensuring that if future changes where to happen the code would not be redundent.
 
 Mobile devices such as iOS and Andriod handle JSON Objects differently, that is why i have created an order for READ responses, 
-ensuring the device can present data in the correct way.
+ensuring the device can present data in the correct way. I also have made the time in milliseconds with unixtimestamps as they are universal.
 
 ## Installation
 You will require the following prerequisites:
@@ -71,12 +71,9 @@ The following Curl example shows the typical body content to be sent in a Post a
 			"box_type": "vegetarian",
 			"gousto_reference": 59,
 			"season": "all",
-			"ingredients": {
 				"in_your_box": null,
 				"recipe_diet_type_id": "meat",
 				"base": "noodles"
-			},
-			"content": {
 				"title": "Sweet Chilli and Lime Beef on a Crunchy Fresh Noodle Salad",
 				"slug": "sweet-chilli-and-lime-beef-on-a-crunchy-fresh-noodle-salad",
 				"short_title": null,
@@ -87,15 +84,13 @@ The following Curl example shows the typical body content to be sent in a Post a
 				"preparation_time_minutes": 35,
 				"shelf_life_days": 4,
 				"equipment_needed": "Appetite",
-				"origin_country": "Great Britain"
-			},
-			"nutrition": {
+				"origin_country": "Great Britain",
 				"calories_kcal": 401,
 				"protein_grams": 12,
 				"fat_grams": 35,
 				"carbs_grams": 0,
 				"protein_source": "beef"
-			}
+			
 		}
 }
 ```
@@ -175,12 +170,14 @@ The request below requests all recepies.
 
 The request below is for cuisine(s) which allow you to mutli-select cuisines and also specify the limit the page will return. The Maximum limit is 5. Cuisines are sorted by id.
 
-`curl -d
+`curl -d`
+```json
 {
     "cuisine": ["asian","italian"],
     "limit":3
 }
--H "Content-Type: application/json" -X **GET**  https://demo.demo/api/cuisine`
+```
+`-H "Content-Type: application/json" -X **GET**  https://demo.demo/api/cuisine`
 
 **Read Response Cuisine**
 
@@ -192,10 +189,10 @@ The Response should have pagination links, any links that cannot be generated wi
 	"page":1,
 	"links": {
 			"self": "https://demo.demo/api/cuisine",
-		    "first": "https://demo.demo/api/cuisine/1",
-			"last": "https://demo.demo/api/cuisine/5",
-			"prev": null,
-			"next": "https://demo.demo/api/cuisine/2"
+			    "first": "https://demo.demo/api/cuisine/1",
+				"last": "https://demo.demo/api/cuisine/5",
+				"prev": null,
+				"next": "https://demo.demo/api/cuisine/2"
 	},
 	"data": [{
 		"0": {
@@ -237,52 +234,44 @@ The Response should have pagination links, any links that cannot be generated wi
 ```
 
 
-**Delete**
-
-The delete request below is for receipes which allow you to mutli-select recipes by ID. This will return a 200 if successful. A 404 will be returned if the ID is not found. A 500 will be for a method failure.
-
-`curl -d
-{
-    "id": [1]
-}
- -H "Content-Type: application/json" -X **DELETE** https://demo.demo/api
- `
 
 **Update**
 
 This will update request **does not allow a mutli-select option with an array**, properties should be contained inside the modify object, if a modify object is incomplete or ill-formed or empty a 500 will be returned. If an ID cannot be found it will be a 404.
 
-`curl -d
+
+`curl -d`
+```json
 {
     "id":2,
     modify:{
     	"protein_source": "beef"
     }
 }
--H "Content-Type: application/json" -X **PUT** https://demo.demo/api`
-
-This will return the modified version of the recipe that was to be updated.
-
-**Rating Recipe Update**
-
-This will update request **does not allow a mutli-select option with an array**, properties should be contained inside the modify object, if a modify object is incomplete or ill-formed or empty a 500 will be returned. If an ID cannot be found it will be a 404. If a rating is not within a range of 1 and 5 a 400 will be returned forming a bad request.
-
-`curl -d
-{
-   "0":{
-		"id":2,
-		modify:{
-		    	"rating": 5
-		    	}
-		}
-}
--H "Content-Type: application/json" -X **PUT** https://demo.demo/api`
+```
+`-H "Content-Type: application/json" -X **PUT** https://demo.demo/api`
 
 This will return the modified version of the recipe that was to be updated.
 
 
 ## Testing
 
+Testing was done by testing for both web and api, with die and dump.
+
 ## Future Changes
 
+In the future delete could be implemented and a better way to store information such as redis with keys.
 
+Here is how the Delete request could look like:
+
+**Delete**
+
+The delete request below is for receipes which allow you to mutli-select recipes by ID. This will return a 200 if successful. A 404 will be returned if the ID is not found. A 500 will be for a method failure.
+
+`curl -d`
+```json
+{
+    "id": [1]
+}
+```
+`-H "Content-Type: application/json" -X **DELETE** https://demo.demo/api`
