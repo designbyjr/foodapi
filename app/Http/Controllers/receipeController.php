@@ -24,9 +24,51 @@ class receipeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request, Mycsv $Mycsv,JSONMapper $JSONMapper)
     {
-        //
+        $data = $request->all();
+        $validator = Validator::make($request->all(), [
+
+            "created_at" => "min:10|required",
+            "updated_at" => "min:10|required",
+            "recipe_cuisine" => "min:3|required",
+            "box_type" => "min:3|required",
+            "gousto_reference" => "required|numeric",
+            "season" => "required|min:3",
+            "in_your_box" => "nullable",
+            "recipe_diet_type_id" => "required",
+            "base" => "nullable",
+             "title" => "required",
+             "slug" => "required",
+             "short_title" => "nullable",
+             "marketing_description" => "required",
+             "bulletpoint1" => "nullable",
+             "bulletpoint2" => "nullable",
+             "bulletpoint3" => "nullable",
+             "preparation_time_minutes" => "numeric|required",
+             "shelf_life_days" => "numeric|required",
+             "equipment_needed" => "required",
+             "origin_country" => "required|min:4",
+             "calories_kcal" => "numeric|required",
+             "protein_grams" => "numeric|required",
+             "fat_grams" => "numeric|required",
+             "carbs_grams" => "numeric|required",
+             "protein_source" => "required"
+
+        ]);
+
+        if ($validator->fails()) {
+            abort(400);
+        }
+        //check keys match cols
+        $Mycsv->checkKeys($request->all());
+
+        $count = $Mycsv->getCount();
+        //prepend id to array
+        $array = ['id' => $count] + $data;
+
+        return $JSONMapper->mapCheck($Mycsv->CreateRows($array),$request);
+
     }
 
     /**
@@ -94,18 +136,30 @@ class receipeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, MyCsv $Mycsv, JSONMapper $JSONMapper)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|min:1|array'
+            'id' => 'required|min:1',
+            'modify' => 'array|min:1'
         ]);
 
         if ($validator->fails()) {
-            return response()->withErrors($validator);
-
+            abort(400);
         }
 
-        return "{'yes':'pass'}";
+        $cols = $request->get('modify');
+        $id = $request->get('id');
+        //now check if keys are valid in modify obj
+        $Mycsv->checkKeys($cols);
+
+        //get all collection data
+        $data = collect( $Mycsv->readOne() );
+
+        // now update the rows
+        $Mycsv->UpdateRows($data,$cols,$id);
+
+        //now return updated row
+        return $JSONMapper->mapCheck( $Mycsv->readOne($id), $request);
     }
 
     /**

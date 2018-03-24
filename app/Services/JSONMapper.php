@@ -9,37 +9,6 @@ class JSONMapper {
 	private $data;
 	private $items;
 
-	public function mapCheck($collection, Request $request, $cuisine = null, $pagenumber = null)
-	{
-		
-		$count = count($collection->keys()) - 1;
-		$keys = $collection->values()->all();
-
-		if(array_key_exists($count, $keys ))
-		{
-
-			$this->data = $collection->transform(function($item,$key) { 
-				return $this->getMap(collect($item));
-			});
-
-			$this->items = $collection->count();
-		}
-		else
-		{
-			$this->data = $this->getMap($collection);
-			$this->items = 1;
-		}
-
-		$links = $this->getLinks($request,$pagenumber,$this->items,$cuisine);
-		
-		$map =[	"response" => 200,
-				"links" => $links,
-				"data" => [ $this->data->values()->all() ]
-			];
-
-		return response()->json([$map],200);
-	}
-
 	private function getMap($collection)
 	{	
 			return	[
@@ -50,6 +19,7 @@ class JSONMapper {
 						"box_type" => $collection->get('box_type'),
 						"gousto_reference" => $collection->get('gousto_reference'),
 						"season" => $collection->get('season'),
+						"rating" => rand(1,5),
 						"ingredients" => [
 							"in_your_box" => $collection->get('in_your_box'),
 							"recipe_diet_type_id" => $collection->get('recipe_diet_type_id'),
@@ -103,4 +73,39 @@ class JSONMapper {
 		return [ "self" => $request->url() ];	
 		
 	}
+
+	public function mapCheck($collection, Request $request, $cuisine = null, $pagenumber = null)
+	{
+		
+		$count = count($collection->keys()) - 1;
+
+		if(array_key_exists($count, $collection->all()))
+		{
+			$this->data = $collection->transform(function($item,$key) {
+
+				return $this->getMap(collect($item));
+			});
+
+			$this->items = $collection->count();
+		}
+		else
+		{
+			$this->data = $this->getMap($collection);
+			$this->items = 1;
+		}
+
+		$links = $this->getLinks($request,$pagenumber,$this->items,$cuisine);
+		
+		$map =[	"response" => 200,
+				"links" => $links,
+				"data" => [ 
+							$this->data
+							]
+			];
+
+		return response()->json([$map],200);
+	}
+
+
+
 }

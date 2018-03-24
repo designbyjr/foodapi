@@ -48,18 +48,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        // if($exception->getStatusCode() == "404")
-        // {
-        //     return response()->json(['errors'=>"The url is invalid, not found"], 404);
-        // }
-        // if($exception->getStatusCode() == "400")
-        // {
-        //     return response()->json(['errors'=>"The request is Malformed"], 400);
-        // }
-        // if($exception->getStatusCode() == "500")
-        // {
-        //     return response()->json(['errors'=>"Our server has lost its Guostto, please check and try again"], 500);
-        // }
+
+        if($exception->getStatusCode() == "404")
+        {
+            return response()->json(['errors'=>"The url is invalid, not found"], 404);
+        }
+        if($exception->getStatusCode() == "400")
+        {
+            return response()->json(['errors'=>"The request is Malformed"], 400);
+        }
+        if($exception->getStatusCode() == "500")
+        {
+            return response()->json(['errors'=>"Our server has lost its Guostto, please check and try again"], 500);
+        }
         return parent::render($request, $exception);
     }
 }

@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/all', 'receipeController@index');
 Route::get('/id/{data}', 'receipeController@showId');
 Route::get('/cuisine/{data}', 'receipeController@showCuisine');
+Route::get('/cuisine/{data}/{page}', 'receipeController@showCuisine');
+Route::put('/update','receipeController@update');
+Route::post('/create','receipeController@create');

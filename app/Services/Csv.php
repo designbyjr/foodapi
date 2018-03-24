@@ -22,11 +22,14 @@ class MyCsv {
 	/*
 	** Test this update function
 	*/	
-	public function CreateRows(array $rows)
-	{	$collection = $this->getAllResults();
+	public function CreateRows($rows)
+	{	
+		
+		$collection = $this->getAllResults();
 		$body = $collection->push($rows);
-
-		return $this->writeToCsv($body);
+		
+		$this->writeToCsv($body);
+		return $body;
 	}
 
 	/*
@@ -47,10 +50,18 @@ class MyCsv {
 		// //add new columns
 		$body->prepend($header);
 
-		// //we insert the CSV header
+		//we insert the CSV header
 		$this->csvWriter->insertAll($body->all());
 
 		return $body;
+	}
+
+	public function checkKeys(array $array)
+	{
+		$cols = array_flip($this->getKeys());
+		foreach ($array as $key => $value) {
+           if(!array_key_exists($key, $cols)) return abort(400);
+        }
 	}
 
 	/*
@@ -84,24 +95,40 @@ class MyCsv {
 
 	}
 
-	public function test()
+	public function test($json)
 	{	
-		return $this->CreateColumn('rating');
+		return $this->fixColsToDateTime( collect(json_decode($json)));
 	}
 
 	//fix this
 	private function fixColsToDateTime(collection $collection)
 	{	
 		$keys = $this->getKeys();
+		$singleCount = count($keys) - 1;
 
-		return $collection->transform(function($item,$key) use ($keys){
-				$array = array_combine($keys,$item);
-				$array["created_at"] = Date('d/m/Y H:i:s',substr($array["created_at"],0,10));
-				$array["updated_at"] = Date('d/m/Y H:i:s',substr($array["updated_at"],0,10));
-				return $array;
-			});
+		if(!array_key_exists($singleCount, $collection->all())) {
+			
+			return $collection->transform(function($item,$key) use ($keys){
+					$array = array_combine($keys,$item);
+					$array["created_at"] = Date('d/m/Y H:i:s',(int)substr((string)$array["created_at"],0,10));
+					$array["updated_at"] = Date('d/m/Y H:i:s',(int)substr((string)$array["updated_at"],0,10));
+					return $array;
+				});
+		}
 
+		// For single array collection
 
+		$array = $collection->all();
+		$array = array_combine($keys,$array);
+		$array["created_at"] = Date('d/m/Y H:i:s',(int)substr((string)$array["created_at"],0,10));
+		$array["updated_at"] = Date('d/m/Y H:i:s',(int)substr((string)$array["updated_at"],0,10));
+		return $array;
+
+	}
+
+	public function getCount()
+	{
+		return count($this->readOne());
 	}
 
 	/*
@@ -156,30 +183,38 @@ class MyCsv {
 	/*
 	** Test this update function
 	*/	
-	public function UpdateRows(collection $collection, array $rows)
-	{
-		$body = $collection->transform(function($item,$key) use ($rows){
-				if( array_key_exists( $key, array_keys($rows) ) )
+	public function UpdateRows($collection, array $rows, string $id)
+	{	
+
+		$body = $collection->map(function($item,$key) use ($rows,$id){
+				if( $item['id'] == $id )
 				{
-					return $rows[$key];
+					foreach ($rows as $key => $value) {
+						$item[$key] = $rows[$key];
+					}
+					
+					return $item;
 				}
 				return $item;
-			});
+		});
 
-		return $this->writeToCsv($body);
+		$this->writeToCsv($body);
+		
+		return $body;
 	}
 
 	/*
 	** This writes the csv file with headers and body.
 	*/
-	private function writeToCsv(collection $body)
+	private function writeToCsv($body)
 	{
 		$header = $this->getKeys();
-		$body = $this->fixColsToDateTime($body);
+		$body = $this->fixColsToDateTime(collect($body));
 		$body->prepend($header);
 
 		//we insert the CSV header
 		$this->csvWriter->insertAll($body->all());
+		return true;
 	}
 
 }
